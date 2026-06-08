@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package proto.lox.v1;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/maroufi/lox/gen/go/proto/lox/v1;loxv1";
+
+service LockService {
+  rpc Acquire(AcquireRequest) returns (AcquireResponse);
+}
+
+message AcquireRequest {
+  string lock_name = 1;
+  string owner = 2;
+  google.protobuf.Duration ttl = 3;
+}
+
+message AcquireResponse {
+  AcquireStatus status = 1;
+  Lease lease = 2;
+  string message = 3;
+}
+
+enum AcquireStatus {
+  ACQUIRE_STATUS_UNSPECIFIED = 0;
+  ACQUIRE_STATUS_ACQUIRED = 1;
+  ACQUIRE_STATUS_REJECTED = 2;
+}
+
+message Lease {
+  string lock_name = 1;
+  string owner = 2;
+  google.protobuf.Duration ttl = 3;
+  google.protobuf.Timestamp acquired_at = 4;
+  google.protobuf.Timestamp expires_at = 5;
+}
